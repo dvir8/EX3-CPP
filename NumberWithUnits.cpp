@@ -12,6 +12,10 @@ NumberWithUnits::NumberWithUnits(double _num, std::string n){
     x = _num;
     s = n;
 }
+NumberWithUnits::NumberWithUnits(std::string s){
+
+
+}
 void NumberWithUnits::read_units(std::ifstream  &theRead){
    std:: string left;
     std:: string right;
@@ -29,14 +33,15 @@ void NumberWithUnits::read_units(std::ifstream  &theRead){
         temp>>unitl;
         temp2>>dr; //1000
         temp2>>unitr;  // m
-        NumberWithUnits::theMap[unitr][unitl]=dl; 
+        NumberWithUnits::theMap[unitr][unitl]=dl;
+        NumberWithUnits::theMap[unitr][unitr]=dl/dl; 
         NumberWithUnits::theMap[unitl][unitr]=1/dl;
            
 }
 
-        for(auto const& Key:theMap){
-        for(auto const& KeyTwo:Key.second){
-        std::cout<<Key.first << " : " << KeyTwo.first << " : " << KeyTwo.second << std::endl;}}
+        for(auto const& theKeyOfMap:theMap){
+        for(auto const& theKeyOfMap2:theKeyOfMap.second){
+        std::cout<<"{"<<theKeyOfMap.first << "," << theKeyOfMap2.first << "}=" << theKeyOfMap2.second << std::endl;}}
 }
     NumberWithUnits NumberWithUnits::operator+(NumberWithUnits &other) {
         x = x + theMap[other.s][s]*other.x;

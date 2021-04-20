@@ -14,12 +14,12 @@ NumberWithUnits ym{600, "m"};
 NumberWithUnits zcm{60, "cm"};
 NumberWithUnits tkm{5, "km"};
 
-CHECK_EQ((xkm + ym) , "1.6[km]");
-CHECK_EQ((xkm + tkm) , "6[km]");
-CHECK_EQ((ym + zcm) , "600.60[m]");
-CHECK_EQ((xkm + zcm) , "1.00060[km]");
-CHECK_EQ((xkm + tkm + ym) , "6.6[km]");
-CHECK_EQ((ym + zcm + tkm) , "5600.60[M]");
+CHECK_EQ((xkm + ym) , NumberWithUnits{"1.6[km]"});
+CHECK_EQ((xkm + tkm) , NumberWithUnits{"6[km]"});
+CHECK_EQ((ym + zcm) , NumberWithUnits{"600.60[m]"});
+CHECK_EQ((xkm + zcm) , NumberWithUnits{"1.00060[km]"});
+CHECK_EQ((xkm + tkm + ym) , NumberWithUnits{"6.6[km]"});
+CHECK_EQ((ym + zcm + tkm) , NumberWithUnits{"5600.60[M]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{600, "min"};
@@ -27,40 +27,38 @@ NumberWithUnits zsec{60, "sec"};
 NumberWithUnits thour{6, "hour"};
 
 
-CHECK_EQ((xhour + thour) , "7[hour]");
-CHECK_EQ((xhour + ymin) , "11[hour]");
-CHECK_EQ((xhour + zsec) , "1.0100[hour]");
-CHECK_EQ((ymin + xhour) , "660[min]");
-CHECK_EQ((ymin + thour) , "960[min]");
+CHECK_EQ((xhour + thour) , NumberWithUnits{"7[hour]"});
+CHECK_EQ((xhour + ymin) , NumberWithUnits{"11[hour]"});
+CHECK_EQ((xhour + zsec) , NumberWithUnits{"1.0100[hour]"});
+CHECK_EQ((ymin + xhour) , NumberWithUnits{"660[min]"});
+CHECK_EQ((ymin + thour) , NumberWithUnits{"960[min]"});
 
 NumberWithUnits xton{6, "ton"};
 NumberWithUnits ykg{600, "kg"};
 NumberWithUnits zg{6, "g"};
 
 
-CHECK_EQ((xton + ykg) , "6.6[ton]");
-CHECK_EQ((ykg + zg) , "600.006[kg]");
+CHECK_EQ((xton + ykg) , NumberWithUnits{"6.6[ton]"});
+CHECK_EQ((ykg + zg) , NumberWithUnits{"600.006[kg]"});
 
 NumberWithUnits xusd{4, "USD"};
 NumberWithUnits xusd2{5, "USD"};
 
-CHECK_EQ((xusd + xusd2) ,"9[USD]");
+CHECK_EQ((xusd + xusd2) , NumberWithUnits{"9[USD]"});
 
 }
 
 TEST_CASE("GOOD MINUS"){
-ifstream units("units.txt");
-NumberWithUnits::read_units(units);
 NumberWithUnits xkm{1, "km"};
 NumberWithUnits ym{600, "m"};
 NumberWithUnits zcm{60, "cm"};
 NumberWithUnits tkm{5, "km"};
 
-CHECK_EQ((xkm - ym) , "0.4[km]");
-CHECK_EQ((tkm - xkm) , "4[km]");
-CHECK_EQ((ym - zcm) , "599.40[m]");
-CHECK_EQ((xkm - zcm) , "0.99940[km]");
-CHECK_EQ((tkm - xkm - ym) , "4.4[km]");
+CHECK_EQ((xkm - ym) , NumberWithUnits{"0.4[km]"});
+CHECK_EQ((tkm - xkm) , NumberWithUnits{"4[km]"});
+CHECK_EQ((ym - zcm) , NumberWithUnits{"599.40[m]"});
+CHECK_EQ((xkm - zcm) , NumberWithUnits{"0.99940[km]"});
+CHECK_EQ((tkm - xkm - ym) , NumberWithUnits{"4.4[km]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{6, "min"};
@@ -68,10 +66,10 @@ NumberWithUnits zsec{60, "sec"};
 NumberWithUnits thour{6, "hour"};
 
 
-CHECK_EQ((thour - xhour) , "5[hour]");
-CHECK_EQ((xhour - ymin) , "0.54[hour]");
-CHECK_EQ((xhour - zsec) , "0.59[hour]");
-CHECK_EQ((thour - ymin) , "354[min]");
+CHECK_EQ((thour - xhour) , NumberWithUnits{"5[hour]"});
+CHECK_EQ((xhour - ymin) , NumberWithUnits{"0.54[hour]"});
+CHECK_EQ((xhour - zsec) , NumberWithUnits{"0.59[hour]"});
+CHECK_EQ((thour - ymin) , NumberWithUnits{"354[min]"});
 
 
 NumberWithUnits xton{6, "ton"};
@@ -79,13 +77,13 @@ NumberWithUnits ykg{600, "kg"};
 NumberWithUnits zg{6, "g"};
 
 
-CHECK_EQ((xton - ykg) , "5.4[ton]");
-CHECK_EQ((ykg - zg) , "599.994[kg]");
+CHECK_EQ((xton - ykg) , NumberWithUnits{"5.4[ton]"});
+CHECK_EQ((ykg - zg) , NumberWithUnits{"599.994[kg]"});
 
 NumberWithUnits xusd{4, "USD"};
 NumberWithUnits xusd2{5, "USD"};
 
-CHECK_EQ((xusd - xusd2) ,"-1[USD]");
+CHECK_EQ((xusd - xusd2) ,NumberWithUnits{"-1[USD]"});
 
 
 
@@ -93,19 +91,17 @@ CHECK_EQ((xusd - xusd2) ,"-1[USD]");
 
 
 TEST_CASE("GOOD +="){
-ifstream units("units.txt");
-NumberWithUnits::read_units(units);
 NumberWithUnits xkm{1, "km"};
 NumberWithUnits ym{600, "m"};
 NumberWithUnits zcm{60, "cm"};
 NumberWithUnits tkm{5, "km"};
 
-CHECK_EQ((xkm += ym) , "1.6[km]");
-CHECK_EQ((xkm += tkm) , "6[km]");
-CHECK_EQ((ym += zcm) , "600.60[m]");
-CHECK_EQ((xkm += zcm) , "1.00060[km]");
-CHECK_EQ((xkm += tkm + ym) , "6.6[km]");
-CHECK_EQ((ym += zcm + tkm) , "5600.60[M]");
+CHECK_EQ((xkm += ym) , NumberWithUnits{"1.6[km]"});
+CHECK_EQ((xkm += tkm) , NumberWithUnits{"6[km]"});
+CHECK_EQ((ym += zcm) , NumberWithUnits{"600.60[m]"});
+CHECK_EQ((xkm += zcm) , NumberWithUnits{"1.00060[km]"});
+CHECK_EQ((xkm += tkm + ym) , NumberWithUnits{"6.6[km]"});
+CHECK_EQ((ym += zcm + tkm) , NumberWithUnits{"5600.60[M]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{600, "min"};
@@ -113,24 +109,24 @@ NumberWithUnits zsec{60, "sec"};
 NumberWithUnits thour{6, "hour"};
 
 
-CHECK_EQ((xhour += thour) , "7[hour]");
-CHECK_EQ((xhour += ymin) , "11[hour]");
-CHECK_EQ((xhour += zsec) , "1.0100[hour]");
-CHECK_EQ((ymin += xhour) , "660[min]");
-CHECK_EQ((ymin += thour) , "960[min]");
+CHECK_EQ((xhour += thour) , NumberWithUnits{"7[hour]"});
+CHECK_EQ((xhour += ymin) , NumberWithUnits{"11[hour]"});
+CHECK_EQ((xhour += zsec) , NumberWithUnits{"1.0100[hour]"});
+CHECK_EQ((ymin += xhour) , NumberWithUnits{"660[min]"});
+CHECK_EQ((ymin += thour) , NumberWithUnits{"960[min]"});
 
 NumberWithUnits xton{6, "ton"};
 NumberWithUnits ykg{600, "kg"};
 NumberWithUnits zg{6, "g"};
 
 
-CHECK_EQ((xton += ykg) , "6.6[ton]");
-CHECK_EQ((ykg += zg) , "600.006[kg]");
+CHECK_EQ((xton += ykg) , NumberWithUnits{"6.6[ton]"});
+CHECK_EQ((ykg += zg) , NumberWithUnits{"600.006[kg]"});
 
 NumberWithUnits xusd{4, "USD"};
 NumberWithUnits xusd2{5, "USD"};
 
-CHECK_EQ((xusd += xusd2) ,"9[USD]");
+CHECK_EQ((xusd += xusd2) ,NumberWithUnits{"9[USD]"});
 
 }
 
@@ -142,18 +138,16 @@ CHECK_EQ((xusd += xusd2) ,"9[USD]");
 
 
 TEST_CASE("GOOD -="){
-ifstream units("units.txt");
-NumberWithUnits::read_units(units);
 NumberWithUnits xkm{1, "km"};
 NumberWithUnits ym{600, "m"};
 NumberWithUnits zcm{60, "cm"};
 NumberWithUnits tkm{5, "km"};
 
-CHECK_EQ((xkm -= ym) , "0.4[km]");
-CHECK_EQ((tkm -= xkm) , "4[km]");
-CHECK_EQ((ym -= zcm) , "599.40[m]");
-CHECK_EQ((xkm -= zcm) , "0.99940[km]");
-CHECK_EQ((tkm -= xkm - ym) , "4.4[km]");
+CHECK_EQ((xkm -= ym) , NumberWithUnits{"0.4[km]"});
+CHECK_EQ((tkm -= xkm) , NumberWithUnits{"4[km]"});
+CHECK_EQ((ym -= zcm) , NumberWithUnits{"599.40[m]"});
+CHECK_EQ((xkm -= zcm) , NumberWithUnits{"0.99940[km]"});
+CHECK_EQ((tkm -= xkm - ym) , NumberWithUnits{"4.4[km]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{6, "min"};
@@ -161,10 +155,10 @@ NumberWithUnits zsec{60, "sec"};
 NumberWithUnits thour{6, "hour"};
 
 
-CHECK_EQ((thour -= xhour) , "5[hour]");
-CHECK_EQ((xhour -= ymin) , "0.54[hour]");
-CHECK_EQ((xhour -= zsec) , "0.59[hour]");
-CHECK_EQ((thour -= ymin) , "354[min]");
+CHECK_EQ((thour -= xhour) , NumberWithUnits{"5[hour]"});
+CHECK_EQ((xhour -= ymin) , NumberWithUnits{"0.54[hour]"});
+CHECK_EQ((xhour -= zsec) , NumberWithUnits{"0.59[hour]"});
+CHECK_EQ((thour -= ymin) , NumberWithUnits{"354[min]"});
 
 
 NumberWithUnits xton{6, "ton"};
@@ -172,31 +166,29 @@ NumberWithUnits ykg{600, "kg"};
 NumberWithUnits zg{6, "g"};
 
 
-CHECK_EQ((xton -= ykg) , "5.4[ton]");
-CHECK_EQ((ykg -= zg) , "599.994[kg]");
+CHECK_EQ((xton -= ykg) , NumberWithUnits{"5.4[ton]"});
+CHECK_EQ((ykg -= zg) , NumberWithUnits{"599.994[kg]"});
 
 NumberWithUnits xusd{4, "USD"};
 NumberWithUnits xusd2{5, "USD"};
 
-CHECK_EQ((xusd -= xusd2) ,"-1[USD]");
+CHECK_EQ((xusd -= xusd2) , NumberWithUnits{"-1[USD]"});
 
 }
 TEST_CASE("GOOD ++$$--"){
-ifstream units("units.txt");
-NumberWithUnits::read_units(units);
 NumberWithUnits xkm{1, "km"};
 NumberWithUnits ym{600, "m"};
 NumberWithUnits zcm{60, "cm"};
 NumberWithUnits tkm{5, "km"};
 
-CHECK_EQ((xkm++) , "2[km]");
-CHECK_EQ((tkm++) , "6[km]");
-CHECK_EQ((ym++) , "601[m]");
-CHECK_EQ((zcm++) , "0.61[cm]");
-CHECK_EQ((xkm--) , "1[km]");
-CHECK_EQ((tkm--) , "5[km]");
-CHECK_EQ((ym--) , "600[m]");
-CHECK_EQ((zcm--) , "0.60[cm]");
+CHECK_EQ((xkm++) , NumberWithUnits{"2[km]"});
+CHECK_EQ((tkm++) , NumberWithUnits{"6[km]"});
+CHECK_EQ((ym++) , NumberWithUnits{"601[m]"});
+CHECK_EQ((zcm++) , NumberWithUnits{"0.61[cm]"});
+CHECK_EQ((xkm--) , NumberWithUnits{"1[km]"});
+CHECK_EQ((tkm--) , NumberWithUnits{"5[km]"});
+CHECK_EQ((ym--) , NumberWithUnits{"600[m]"});
+CHECK_EQ((zcm--) , NumberWithUnits{"0.60[cm]"});
 
 
 NumberWithUnits xhour{1, "hour"};
@@ -205,27 +197,27 @@ NumberWithUnits zsec{60, "sec"};
 NumberWithUnits thour{6, "hour"};
 
 
-CHECK_EQ((xhour++) , "2[hour]");
-CHECK_EQ((ymin++) , "601[min]");
-CHECK_EQ((zsec++) , "61[sec]");
-CHECK_EQ((thour++) , "7[min]");
-CHECK_EQ((xhour--) , "1[hour]");
-CHECK_EQ((ymin--) , "600[min]");
-CHECK_EQ((zsec--) , "60[sec]");
-CHECK_EQ((thour--) , "6[hour]");
+CHECK_EQ((xhour++) , NumberWithUnits{"2[hour]"});
+CHECK_EQ((ymin++) , NumberWithUnits{"601[min]"});
+CHECK_EQ((zsec++) , NumberWithUnits{"61[sec]"});
+CHECK_EQ((thour++) , NumberWithUnits{"7[min]"});
+CHECK_EQ((xhour--) , NumberWithUnits{"1[hour]"});
+CHECK_EQ((ymin--) , NumberWithUnits{"600[min]"});
+CHECK_EQ((zsec--) , NumberWithUnits{"60[sec]"});
+CHECK_EQ((thour--) , NumberWithUnits{"6[hour]"});
 
 NumberWithUnits xton{6, "ton"};
 NumberWithUnits ykg{600, "kg"};
 NumberWithUnits zg{6, "g"};
 
 
-CHECK_EQ((xton++) , "7[ton]");
-CHECK_EQ((ykg++) , "601[kg]");
-CHECK_EQ((xton--) , "6[ton]");
-CHECK_EQ((ykg--) , "600[kg]");
+CHECK_EQ((xton++) , NumberWithUnits{"7[ton]"});
+CHECK_EQ((ykg++) , NumberWithUnits{"601[kg]"});
+CHECK_EQ((xton--) , NumberWithUnits{"6[ton]"});
+CHECK_EQ((ykg--) , NumberWithUnits{"600[kg]"});
 
 NumberWithUnits xusd{4, "USD"};
-CHECK_EQ((xusd++) ,"5[USD]");
+CHECK_EQ((xusd++) ,NumberWithUnits{"5[USD]"});
 }
 
 TEST_CASE("GOOD >&&>=&&<&<=&&==&&!="){

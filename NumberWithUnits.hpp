@@ -15,6 +15,7 @@ namespace ariel {
         static void read_units(std::ifstream  &theRead);
         //constractor
          NumberWithUnits(double num,std::string s);
+         NumberWithUnits(std::string s);
          double getNum();
         std::string gets();
         //+ , - , plus onary , minuos onary , += , -= , ++ , --
