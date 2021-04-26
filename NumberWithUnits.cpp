@@ -6,22 +6,25 @@
 #include <string>
 using namespace ariel;
 using namespace std;
-std::unordered_map<std::string ,std::unordered_map<std::string, double>> NumberWithUnits::theMap;
-NumberWithUnits::NumberWithUnits(){};
-NumberWithUnits::NumberWithUnits(double _num, std::string n){
+const double closeZero = 0.00001;
+std::unordered_map<std::string ,std::unordered_map<std::string, double>> theMap;
+NumberWithUnits::NumberWithUnits(double _num, const std::string& n){
+    try {
+            theMap.at(n);
+            }
+        catch(const exception& e) {
+            throw invalid_argument{"not exsist" };
+        }
     x = _num;
     s = n;
 }
-NumberWithUnits::NumberWithUnits(std::string s){
 
-
-}
 void NumberWithUnits::read_units(std::ifstream  &theRead){
    std:: string left;
     std:: string right;
     std:: string s;
-    double dr;
-    double dl;
+    double dr = 0;
+    double dl = 0;
     std:: string unitr;
     std:: string unitl;
     while (getline(theRead,s)){
@@ -33,128 +36,172 @@ void NumberWithUnits::read_units(std::ifstream  &theRead){
         temp>>unitl;
         temp2>>dr; //1000
         temp2>>unitr;  // m
-        NumberWithUnits::theMap[unitr][unitl]=dl;
-        NumberWithUnits::theMap[unitr][unitr]=dl/dl; 
-        NumberWithUnits::theMap[unitl][unitr]=1/dl;
-           
+        theMap[unitr][unitl]=dl;
+        theMap[unitr][unitr]=1; 
+        theMap[unitl][unitr]=1/dl;
+        for(auto const& theKeyOfMap:theMap[unitr]){
+          double w = theMap[unitl][unitr]*theKeyOfMap.second;
+                theMap[unitl][theKeyOfMap.first] = w;
+                theMap[theKeyOfMap.first][unitl] = 1/w;
+        }
+        for(auto const& theKeyOfMap:theMap[unitl]){
+          double w = theMap[unitr][unitl]*theKeyOfMap.second;
+                theMap[unitr][theKeyOfMap.first] = w;
+                theMap[theKeyOfMap.first][unitr] = 1/w;
+        }
+}
+        
 }
 
-        for(auto const& theKeyOfMap:theMap){
-        for(auto const& theKeyOfMap2:theKeyOfMap.second){
-        std::cout<<"{"<<theKeyOfMap.first << "," << theKeyOfMap2.first << "}=" << theKeyOfMap2.second << std::endl;}}
-}
-    NumberWithUnits NumberWithUnits::operator+(NumberWithUnits &other) {
-        x = x + theMap[other.s][s]*other.x;
-        return other;
+
+        double NumberWithUnits::toChange(double theV, const std::string &uunitl, const std::string &uunitr){
+         
+        if(uunitl == uunitr) {
+            return theV;
+        }
+        try {
+            return theV*theMap.at(uunitl).at(uunitr);
+        }
+        catch(const exception& e) {
+            throw invalid_argument{"Units do not match - ["+uunitl+"] cannot be converted to ["+uunitr+"]"};
+        }
+    }
+
+    NumberWithUnits NumberWithUnits::operator+(const NumberWithUnits &other)const {
+        std::string s1 = s;
+        double tor = toChange(other.x ,other.s ,s1);
+        return NumberWithUnits(this->x + tor ,this->s);
      }
-        NumberWithUnits NumberWithUnits:: operator- ( NumberWithUnits& other){
-            return other;
+        NumberWithUnits NumberWithUnits:: operator- (const NumberWithUnits& other)const{
+            double tor = toChange(other.x ,other.s ,s);
+        return NumberWithUnits(this->x - tor ,this->s);
         }
-        NumberWithUnits NumberWithUnits:: operator- (){
-            return NumberWithUnits() ;
+
+        NumberWithUnits NumberWithUnits:: operator- ()const{
+            return NumberWithUnits(-1 * x, s);
         }
+
         NumberWithUnits NumberWithUnits:: operator+ () const{
-            return NumberWithUnits();
+            return NumberWithUnits(1*x ,s);
         }
+
         NumberWithUnits& NumberWithUnits:: operator+= (const NumberWithUnits& other){
-            if (theMap[other.s].find(s) != theMap[other.s].end()){
-               this->x = this->x + theMap[other.s][s];
-            }
-            return *this;
+           double tor = toChange(other.x ,other.s ,s);
+           this->x = this->x + tor;
+           return *this;
         }
         NumberWithUnits& NumberWithUnits:: operator-= (const NumberWithUnits& other){
-            if (theMap[other.s].find(s) != theMap[other.s].end()){
-            this->x = this->x - theMap[other.s][s];
-            }
-            return *this;
+            double tor = toChange(other.x ,other.s ,s);
+           this->x = this->x - tor;
+           return *this;
         }
+
         NumberWithUnits& NumberWithUnits:: operator++( ){
-            x++;
-            return *this;
-        }
-        NumberWithUnits& NumberWithUnits:: operator -- (){
-            x--;
-            return *this;
-        }
-        NumberWithUnits NumberWithUnits:: operator++ (int){
-            x++;
-            return *this;
-        }
-        NumberWithUnits NumberWithUnits:: operator-- (int){
-            x--;
+            ++x;
             return *this;
         }
 
-        bool ariel::operator==(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
-            double a1 = a.x;
-            double b1 = b.x;
-            if(a1 > b1){
-                a1 = (a1/a1)*b1;
-                if (a1 != b1 ){
-                return false;
-            }
-            }
-            else if(a1 < b1){   
-               b1 = (b1/b1)*a1;
-                if (a1 != b1 ){
-                return false;
-            } 
-            }
-            
-            return true;
+        NumberWithUnits& NumberWithUnits:: operator -- (){
+            --x;
+            return *this;
         }
+
+        NumberWithUnits NumberWithUnits:: operator++ (int){
+            NumberWithUnits temp(x ,s);
+            x++;
+            return temp;
+        }
+        
+        NumberWithUnits NumberWithUnits:: operator-- (int){
+            NumberWithUnits temp(x ,s);
+            x--;
+            return temp;
+        }
+        
+        bool ariel::operator==(const  ariel::NumberWithUnits&  a , const  ariel::NumberWithUnits&  b) {
+         
+            double trueOrfalse2 = b.x - a.toChange(a.x ,a.s ,b.s);
+           
+            return abs(trueOrfalse2)<closeZero;
+        }
+
         bool ariel::operator!=(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
-             double a1 = b.x;
-             double b1 = a.x;
-             if (a1 == b1){
-                 return false;
-             }
-             return true;
+            double trueOrfalse2 = b.x - a.toChange(a.x ,a.s ,b.s);
+           
+            return !(abs(trueOrfalse2)<closeZero);
         }
+        
         bool ariel::operator<=(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
-            double a1 = b.x;
-             double b1 = a.x;
-             if (a1 > b1){
-                 return false;
-             }
-            return true;
+            double trueOrfalse2 = a.toChange(a.x ,a.s ,b.s) - b.x;
+           
+            return abs(trueOrfalse2)<closeZero || trueOrfalse2<-closeZero;
         }
+
         bool ariel::operator>=(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
-            double a1 = b.x;
-            double b1 = a.x;
-             if (a1 < b1){
-                 return false;
-             }
-             return true;
-        }  
-        bool ariel::operator<(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
-            double a1 = b.x;
-             double b1 = a.x;
-             if (a1 >= b1){
-                 return false;
-             }
-            return true;
+            double trueOrfalse2 = a.toChange(a.x ,a.s ,b.s) - b.x;
+           
+            return abs(trueOrfalse2)<closeZero || trueOrfalse2>closeZero;
         }
+
+        bool ariel::operator<(const  NumberWithUnits&  a , const  NumberWithUnits&  b) {
+            double trueOrfalse2 = a.toChange(a.x ,a.s ,b.s) - b.x;
+           
+            return  trueOrfalse2<-closeZero;
+        }
+        
         bool ariel::operator>(const  NumberWithUnits&  a ,const  NumberWithUnits&  b) {
-            double a1 = b.x;
-             double b1 = a.x;
-             if (a1 <= b1){
-                 return false;
-             }
-            return true;
+            double trueOrfalse2 = a.toChange(a.x ,a.s ,b.s) - b.x;
+           
+            return  trueOrfalse2>closeZero;
         }
     
-        double ariel::operator* (double Num , const NumberWithUnits &p1){
-        //  double d = Num*theMap[p1.s][s]*p1.x;
-        //  return d;
-        return Num;
+        NumberWithUnits ariel::operator* (double Num , const NumberWithUnits &p1){
+        return NumberWithUnits(Num*p1.x , p1.s);
      }
-        double NumberWithUnits::operator*(double num){
-            return num;
+
+        NumberWithUnits NumberWithUnits::operator* (double Num){
+            return NumberWithUnits(Num*(this->x) , s);
         }
+
          std::ostream& ariel::operator<<(std::ostream& os, const NumberWithUnits& p){
-             return os;
+             
+             return (os << p.x << "[" << p.s << "]");
         }
+
          std::istream& ariel::operator>>(std::istream& is, NumberWithUnits& p){
+             char a = ' ';
+             std::string t;
+             while(is.get(a)){
+                 if(a==' '){
+                     continue;
+                 }
+                 if(a=='['){
+                    break;
+                    }
+                t+=a;
+                    
+             }
+            std:: string l ;
+             while(is.get(a)){
+                  if(a==' '){
+                     continue;
+                 }
+                 if(a==']'){
+                    break;
+                    }
+                l+=a;
+                    
+             }
+
+             p.x =stod(t);
+             p.s =l;
+             try{
+                theMap.at(p.s);
+             }
+             catch(const exception& e) {
+            throw invalid_argument{"not exsist"};
+            }
+            
              return is;
         }
+

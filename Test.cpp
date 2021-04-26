@@ -19,7 +19,7 @@ CHECK_EQ((xkm + tkm) , NumberWithUnits{"6[km]"});
 CHECK_EQ((ym + zcm) , NumberWithUnits{"600.60[m]"});
 CHECK_EQ((xkm + zcm) , NumberWithUnits{"1.00060[km]"});
 CHECK_EQ((xkm + tkm + ym) , NumberWithUnits{"6.6[km]"});
-CHECK_EQ((ym + zcm + tkm) , NumberWithUnits{"5600.60[M]"});
+CHECK_EQ((ym + zcm + tkm) , NumberWithUnits{"5600.60[m]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{600, "min"};
@@ -101,7 +101,7 @@ CHECK_EQ((xkm += tkm) , NumberWithUnits{"6[km]"});
 CHECK_EQ((ym += zcm) , NumberWithUnits{"600.60[m]"});
 CHECK_EQ((xkm += zcm) , NumberWithUnits{"1.00060[km]"});
 CHECK_EQ((xkm += tkm + ym) , NumberWithUnits{"6.6[km]"});
-CHECK_EQ((ym += zcm + tkm) , NumberWithUnits{"5600.60[M]"});
+CHECK_EQ((ym += zcm + tkm) , NumberWithUnits{"5600.60[m]"});
 
 NumberWithUnits xhour{1, "hour"};
 NumberWithUnits ymin{600, "min"};
